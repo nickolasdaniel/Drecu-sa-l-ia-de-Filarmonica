@@ -8,8 +8,29 @@ from django.utils.translation import ugettext_lazy as _
 from .forms import RegistrationForm,EditProfileForm,CustomProfileForm
 
 class EventAdmin(admin.ModelAdmin):
+
     model = Events
-    list_display = ['day']
+    can_delete = False
+    fk_name = 'filauser'
+    verbose_name_plural = 'Event'
+
+    fieldsets = (
+        (None, {'fields': ('UserEvent',)}),
+
+        (_('Event'), {'fields': ('day',)}),
+        (_('Event Details'), {'fields': ('concert_type','vocal_type','city','location','room',)}),
+        (_('Event Time'), {'fields': ('start_time','final_time',)}),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('UserEvent','day','concert_type','vocal_type','city','location','room','start_time','final_time',),
+        }),
+    )
+
+    list_display = ['UserEvent','day']
+    search_fields = ('UserEvent',)
 
 admin.site.register(Events, EventAdmin)
 
@@ -41,7 +62,7 @@ class FilaCustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'email2', 'first_name', 'last_name', 'password1', 'password2','photo','phone_number','instagram','facebook','caption',),
+            'fields': ('email', 'email2', 'first_name', 'last_name', 'password1', 'password2','photo','phone_number','instagram','facebook','caption','day',),
         }),
     )
     list_display = ['email', 'first_name', 'last_name']
