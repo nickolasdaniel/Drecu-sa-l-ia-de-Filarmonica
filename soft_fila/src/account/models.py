@@ -1,3 +1,4 @@
+import pytz
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -6,7 +7,8 @@ from django.contrib.auth.models import AbstractUser,BaseUserManager,User
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.conf import settings
-
+from django.core.exceptions import ValidationError
+import datetime
 """
 class FilaSub(models.Model):
 
@@ -38,7 +40,7 @@ class FilaManager(BaseUserManager):
 
         return user
 
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(self, email,password=None, **extra_fields):
 
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
@@ -113,12 +115,59 @@ post_save.connect(create_user_profile,sender=FilaUser)
 
 class Events(models.Model):
 
-    day = models.DateField(u'Day of the event',help_text="Select the day of the event")
+    UserEvent = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete = models.CASCADE,related_name ='user_event')
+
+    day = models.DateField(u'Day of the event',help_text="Select the day of the event",default='2001-02-01')
+    concert_type = models.CharField(u'Type of concert',max_length=100,help_text='Select the type of concert',default='vocal-simfonic')
+    vocal_type = models.CharField(u'Type of vocalist',max_length=100,help_text='Select the vocalist type',default='mezzosopran')
+    city = models.CharField(u'City',max_length=100,help_text='Select the city',default='Timisoara')
+    location = models.CharField(u'Location',max_length=100,help_text='Select the city location',default='Capitol')
+    room = models.CharField(u'room',max_length=100,help_text='Select the location room',default='')
+
+    start_time = models.TimeField(u'Starting Time',help_text='Select the time to start the event',default=datetime.time(hour=8))
+    final_time = models.TimeField(u'Final Time',help_text='Select the time to end the event',default=datetime.time(hour=9))
+
+    def check_overlap(self,fixed_start,fixed_end,new_start,new_end):
+
+        overlap = False
+
+        if new_start == fixed_end or new_end == fixed_start:
+            overlap = False
+
+        elif (new_start >= fixed_start and new_start <= fixed_end) or (new_end >= fixed_start and new_end <=fixed_end):
+            overlap = True
+
+        elif new_start <= fixed_start and new_end >= fixed_end:
+            overlap = True
+
+        return overlap
+
+    def clean(self):
+
+        if self.final_time <= self.start_time:
+            raise ValidationError('Ending times must after starting times')
+
+        events = Events.objects.filter(day = self.day).values_list('start_time',flat=True)
+        if events.exists():
+            for event in events:
+                if self.check_overlap(event.start_time,event.end_time,self.start_time,self.final_time):
+                    raise ValidationError('There is an overlap with another event: ' + str(event.day) + ', ' + str(event.start_time) + '-' + str(event.end_time))
+
+    def __str__(self):
+        return '{} {}'.format(self.day,self.UserEvent)
 
     class Meta:
+
         verbose_name = u'Scheduling'
         verbose_name_plural = u'Scheduling'
+        ordering = ('day',)
 
+
+def create_user_event(sender,instance,created,**kwargs):
+    if created:
+        Events.objects.create(UserEvent = instance)
+
+post_save.connect(create_user_event,sender=FilaUser)
 
 """@receiver(post_save,sender = FilaUser)
     def save_user_profile(sender,instance,**kwargs):
