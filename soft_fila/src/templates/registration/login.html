@@ -1,0 +1,51 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Filarmonica</title>
+    <link rel="stylesheet" type = "text/css" href="{% static 'css/login.css' %}">
+
+  </head>
+  <body>
+  <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+    <div class="rectangle-20">
+      <div class="group-4">
+    <div class="rectangle-21" align="center">
+      <div class="group-2">
+        <div class="group">
+        <p class="autentificare">Autentificare</p>
+		</br>
+        <p class="nu-ai-deja-un-cont">Nu ai deja un cont? <a href="">Inregistrare</a></p>
+		</br>
+		</br>
+         <div class="email">
+           <p class="adresa-de-email">Adresa de Email :{{ form.username}}</p>
+         </div>
+		 </br>
+		 </br>
+		 <div class="parola">
+		 <p>Parola:{{ form.password }} </p>
+		 </div>
+        </div>
+      </div>
+	  </br>
+        <p><input type="submit" value="Login"></p>
+        <input type="hidden" name ="next" value="{{ next }}" >
+	  	 <div>
+		 </br>
+		 </br>
+     <div class="rectangle-32">
+       <p>Datele dumneavoastra personale sunt prelucrate de CREDIDAM potrivit notificarii nr.8338, în conformitate cu Legea nr.677/2001, în scopul îndeplinirii atributiilor legale de colectare si repartizare. Datele pot fi dezvaluite unor terti în baza unui temei legal justificat. Va puteti exercita drepturile de acces, de interventie si de opozitie, în conditiile prevazute de Legea nr.677/2001, printr-o cerere scrisa semnata si datata, trimisa pe adresa CREDIDAM.</p>
+     </div>
+	 </div>
+     </div>
+     </div>
+   </div>
+      </form>
+  </body>
+</html>

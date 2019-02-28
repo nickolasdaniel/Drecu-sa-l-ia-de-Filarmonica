@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Formular</title>
+</head>
+<body>
+    <form method="post" enctype="multipart/form-data" action="{% url 'formular' %}">
+        {% csrf_token %}
+
+        <p>enter your first name {{ form.first_name }}</p>
+        <p>enter your last name {{ form.last_name }}</p>
+
+        <p>enter your photo {{ form.photo }}</p>
+
+        <p>enter your phone_number {{ form.phone }}</p>
+
+        <p>enter your instagram {{ form.instagram }}</p>
+        <p>enter your facebook {{ form.facebook }}</p>
+
+        <p>enter your caption {{ form.caption }}</p>
+
+        <p><input type="submit" value="Save"></p>
+        <input type="hidden" name ="next" value="{{ next }}" >
+    </form>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+<body>
+    <form method="get" action="">
+        {% csrf_token %}
+
+        <p>enter your first name:{{ user.userprofile.first_name }}</p>
+        <p>enter your last name:{{ user.userprofile.last_name }}</p>
+
+        <p>enter your photo:{{ user.userprofile.photo }}</p>
+        <p>enter your photo_number:{{ user.userprofile.phone }}</p>
+
+        <p>enter your instagram:{{ user.userprofile.instagram }}</p>
+        <p>enter your facebook:{{ user.userprofile.facebook }}</p>
+
+        <p>enter your caption:{{ user.userprofile.caption }}</p>
+
+    </form>
+</body>
+</html>

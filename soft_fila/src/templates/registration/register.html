@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>registration page</title>
+</head>
+<body>
+    <form method="post" action="{% url 'register' %}">
+        {% csrf_token %}
+        <p>enter your first_name</p>{{ form.first_name }}
+        <p>enter your last_name</p>{{ form.last_name }}
+
+        <p>enter your email</p>{{ form.email }}
+        <p>confirm your email</p>{{ form.email2 }}
+
+        <p>enter your password</p>{{ form.password1 }}
+        <p>confirm your password</p>{{ form.password2 }}
+
+        <p><input type="submit" value="Register"></p>
+        <input type="hidden" name ="next" value="{{ next }}" >
+    </form>
+</body>
+</html>
